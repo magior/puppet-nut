@@ -31,10 +31,12 @@ define nut::ups (
   }
 
   # Handle SNMP or XML UPS drivers
-  if has_key($::nut::driver_packages, $driver) {
-    ensure_packages([$::nut::driver_packages[$driver]])
+  $driver_package = $::nut::driver_packages[$driver]
 
-    Package[$::nut::driver_packages[$driver]]
+  if $driver_package != undef {
+    ensure_packages([$driver_package])
+
+    Package[$driver_package]
       -> ::Concat::Fragment["nut ups ${ups}"]
   }
 }
