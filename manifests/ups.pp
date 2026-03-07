@@ -34,7 +34,7 @@ define nut::ups (
   $driver_package = $::nut::driver_packages[$driver]
 
   if $driver_package != undef {
-    ensure_packages([$driver_package])
+    stdlib::ensure_packages([$driver_package])
 
     Package[$driver_package]
       -> ::Concat::Fragment["nut ups ${ups}"]
