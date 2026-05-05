@@ -32,7 +32,15 @@ define nut::client::upssched (
     fail('You must include the nut::common base class before using any nut::client defined resources')
   }
 
-  if $::nut::client::use_upssched {
+  # Local patch (BBS): the upstream code referenced
+  # $::nut::client::use_upssched, which only exists when the nut::client
+  # class is declared. When consumers declare the server-side `nut`
+  # class (which already configures nut::common with use_upssched via
+  # the client_use_upssched parameter), nut::client is never declared
+  # and the catalog compile fails with "Unknown variable".
+  # nut::common::use_upssched is set on both code paths and is the
+  # correct variable to gate the fragment.
+  if $::nut::common::use_upssched {
     ::concat::fragment { "nut upssched ${title}":
       content => template("${module_name}/upssched.at.erb"),
       target  => "${::nut::common::conf_dir}/upssched.conf",
